@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const fccTestingRoutes = require('./routes/fcctesting.js');
 const runner = require('./test-runner.js');
 
+const gameController = require('./controllers/game_controller.mjs');
 const app = express();
 
 app.use(helmet.noSniff());
@@ -58,5 +59,8 @@ const server = app.listen(portNum, () => {
     }, 1500);
   }
 });
+
+const io = socket(server);
+gameController(io)
 
 module.exports = app; // For testing
