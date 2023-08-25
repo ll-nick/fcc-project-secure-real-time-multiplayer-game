@@ -1,24 +1,42 @@
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+const canvasWidth = 640;
+const canvasHeight = 480;
+const playerWidth = 30;
+const playerHeight = 30;
 class Player {
-  constructor({x, y, score, id}) {
-    this.x = x;
-    this.y = y;
+  constructor({
+      x = Math.random() * (canvasWidth - playerWidth),
+      y = Math.random() * (canvasHeight - playerHeight),
+      score = 0,
+      id = Date.now(),
+      width = playerWidth,
+      height = playerHeight,
+      maxX = canvasWidth - playerWidth,
+      maxY = canvasHeight - playerHeight}) {
+    this.x = clamp(x, 0, maxX);
+    this.y = clamp(y, 0, maxY);
     this.score = score;
     this.id = id;
+    this.width = width;
+    this.height = height;
+    this.maxX = maxX;
+    this. maxY = maxY;
   }
 
   movePlayer(dir, speed) {
     switch(dir) {
       case 'up':
-        this.y = this.y + speed;
+        this.y = clamp(this.y - speed, 0, this.maxY);
         break;
       case 'down':
-        this.y = this.y - speed;
+        this.y = clamp(this.y + speed, 0, this.maxY);
         break;
       case 'left':
-        this.x = this.x - speed;
+        this.x = clamp(this.x - speed, 0, this.maxX);
         break;
       case 'right':
-        this.x = this.x + speed;
+        this.x = clamp(this.x + speed, 0, this.maxX);
         break;
       default:
         return;
