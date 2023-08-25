@@ -8,6 +8,8 @@ const context = canvas.getContext('2d');
 const bgColor = '#222200';
 const playerColor = '#FFFFFF'
 
+const pressedKeys = new Set();
+
 socket.on('newPlayer', players => {
     renderPlayers(players);
 });
@@ -32,26 +34,26 @@ function renderPlayers(players) {
 
 document.addEventListener('keydown', event => {
     const key = event.key.toLowerCase();
-    let dir;
-    let speed = 10;
-
-    switch (key) {
-        case 'w':
-            dir = 'up';
-            break;
-        case 's':
-            dir = 'down';
-            break;
-        case 'a':
-            dir = 'left';
-            break;
-        case 'd':
-            dir = 'right';
-            break;
-        default:
-            return;
-    }
-
-    // Send movement instruction to the server
-    socket.emit('move', { dir, speed });
+    pressedKeys.add(key);
+    handleMovement();
 });
+
+document.addEventListener('keyup', event => {
+    const key = event.key.toLowerCase();
+    pressedKeys.delete(key);
+    handleMovement();
+});
+
+function handleMovement() {
+    const speed = 10;
+    let dirX = null;
+    let dirY = null;
+
+    if (pressedKeys.has('w')) dirY = 'up';
+    if (pressedKeys.has('s')) dirY = 'down';
+    if (pressedKeys.has('a')) dirX = 'left';
+    if (pressedKeys.has('d')) dirX = 'right';
+
+    // Send the combined movement direction to the server
+    socket.emit('move', { dirX, dirY, speed });
+}
