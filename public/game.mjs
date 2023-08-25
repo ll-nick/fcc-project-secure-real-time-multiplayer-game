@@ -8,18 +8,26 @@ const context = canvas.getContext('2d');
 const bgColor = '#222200';
 const playerColor = '#FFFFFF'
 
-const pressedKeys = new Set();
+const movementState = { dirX: null, dirY: null };
+let players = {};
 
-socket.on('newPlayer', players => {
+function gameLoop() {
+    handleMovement();
     renderPlayers(players);
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+socket.on('newPlayer', updatedPlayers => {
+    players = updatedPlayers;
 });
 
-socket.on('playerMoved', players => {
-    renderPlayers(players);
+socket.on('playerMoved', updatedPlayers => {
+    players = updatedPlayers;
 })
 
 function renderPlayers(players) {
-    // Clear the canvas
     context.fillStyle = bgColor;
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -34,26 +42,20 @@ function renderPlayers(players) {
 
 document.addEventListener('keydown', event => {
     const key = event.key.toLowerCase();
-    pressedKeys.add(key);
-    handleMovement();
+    if (key === 'w') movementState.dirY = 'up';
+    if (key === 's') movementState.dirY = 'down';
+    if (key === 'a') movementState.dirX = 'left';
+    if (key === 'd') movementState.dirX = 'right';
 });
 
 document.addEventListener('keyup', event => {
     const key = event.key.toLowerCase();
-    pressedKeys.delete(key);
-    handleMovement();
+    if (key === 'w' || key === 's') movementState.dirY = null;
+    if (key === 'a' || key === 'd') movementState.dirX = null;
 });
 
 function handleMovement() {
     const speed = 10;
-    let dirX = null;
-    let dirY = null;
 
-    if (pressedKeys.has('w')) dirY = 'up';
-    if (pressedKeys.has('s')) dirY = 'down';
-    if (pressedKeys.has('a')) dirX = 'left';
-    if (pressedKeys.has('d')) dirX = 'right';
-
-    // Send the combined movement direction to the server
-    socket.emit('move', { dirX, dirY, speed });
+    socket.emit('move', { dirX: movementState.dirX, dirY: movementState.dirY, speed });
 }
