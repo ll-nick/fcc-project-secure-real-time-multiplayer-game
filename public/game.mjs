@@ -5,7 +5,8 @@ const socket = io();
 const canvas = document.getElementById('game-window');
 const context = canvas.getContext('2d');
 
-let player;
+const bgColor = '#222200';
+const playerColor = '#FFFFFF'
 
 socket.on('newPlayer', players => {
     renderPlayers(players);
@@ -17,10 +18,15 @@ socket.on('playerMoved', players => {
 
 function renderPlayers(players) {
     // Clear the canvas
+    context.fillStyle = bgColor;
     context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillRect(0, 0, canvas.width, canvas.height);
 
     for (const player of Object.values(players)) {
-        context.fillRect(player.x, player.y, player.width, player.height);
+        let img = new Image();
+        img.src = player.avatarSrc;
+        console.log(img.src)
+        context.drawImage(img, player.x, player.y, player.width, player.height);
     }
 }
 

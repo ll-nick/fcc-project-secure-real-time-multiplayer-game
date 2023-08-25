@@ -6,26 +6,28 @@ const playerWidth = 30;
 const playerHeight = 30;
 class Player {
   constructor({
-      x = Math.random() * (canvasWidth - playerWidth),
-      y = Math.random() * (canvasHeight - playerHeight),
-      score = 0,
-      id = Date.now(),
-      width = playerWidth,
-      height = playerHeight,
-      maxX = canvasWidth - playerWidth,
-      maxY = canvasHeight - playerHeight}) {
-    this.x = clamp(x, 0, maxX);
-    this.y = clamp(y, 0, maxY);
+    x = Math.random() * (canvasWidth - playerWidth),
+    y = Math.random() * (canvasHeight - playerHeight),
+    score = 0,
+    id = Date.now(),
+    width = playerWidth,
+    height = playerHeight,
+    avatarSrc = '/public/avatar.png'
+  }) {
+    this.maxX = canvasWidth - playerWidth;
+    this.maxY = canvasHeight - playerHeight;
+
+    this.x = clamp(x, 0, this.maxX);
+    this.y = clamp(y, 0, this.maxY);
     this.score = score;
     this.id = id;
     this.width = width;
     this.height = height;
-    this.maxX = maxX;
-    this. maxY = maxY;
+    this.avatarSrc = avatarSrc;
   }
 
   movePlayer(dir, speed) {
-    switch(dir) {
+    switch (dir) {
       case 'up':
         this.y = clamp(this.y - speed, 0, this.maxY);
         break;
