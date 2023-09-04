@@ -8,7 +8,7 @@ module.exports = function (io, canvasWidth = canvasWidth, canvasHeight = canvasH
   io.on('connection', socket => {
 
     // Create a new player
-    const newPlayer = new Player({});
+    const newPlayer = new Player({ id: socket.id });
     players[socket.id] = newPlayer;
 
     // Send player data to the client

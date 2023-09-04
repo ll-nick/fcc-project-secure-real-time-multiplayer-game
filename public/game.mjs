@@ -10,6 +10,7 @@ const playerColor = '#FFFFFF'
 
 const keyDown = { up: false, down: false, left: false, right: false };
 let players = {};
+let playerAvatars = {};
 
 function gameLoop() {
     handleMovement();
@@ -21,6 +22,8 @@ gameLoop();
 
 socket.on('newPlayer', updatedPlayers => {
     players = updatedPlayers;
+    playerAvatars[socket.id] = new Image();
+    playerAvatars[socket.id].src = players[socket.id].avatarSrc;
 });
 
 socket.on('playerMoved', updatedPlayers => {
@@ -33,10 +36,7 @@ function renderPlayers(players) {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     for (const player of Object.values(players)) {
-        let img = new Image();
-        img.src = player.avatarSrc;
-        console.log(img.src)
-        context.drawImage(img, player.x, player.y, player.width, player.height);
+        context.drawImage(playerAvatars[player.id], player.x, player.y, player.width, player.height);
     }
 }
 
