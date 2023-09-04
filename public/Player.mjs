@@ -1,4 +1,4 @@
-import { canvasWidth, canvasHeight, playerWidth, playerHeight } from './constants.mjs';
+import { canvasWidth, canvasHeight, playerWidth, playerHeight, collectibleRadius } from './constants.mjs';
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
@@ -44,7 +44,10 @@ class Player {
   }
 
   collision(item) {
-    if (item.x === this.x && item.y === this.y) {
+    const dx = this.x - item.x;
+    const dy = this.y - item.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < collectibleRadius) {
       this.score += item.value;
       return true;
     }

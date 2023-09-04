@@ -15,6 +15,10 @@ class Collectible {
     this.size = size;
   }
 
+  respawn() {
+    this.x = Math.random() * (canvasWidth - collectibleSize)
+    this.y = Math.random() * (canvasHeight - collectibleSize)
+  }
 }
 
 /*

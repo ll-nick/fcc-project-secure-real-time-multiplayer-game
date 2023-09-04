@@ -15,7 +15,7 @@ let collectible = new Collectible({});
 
 function gameLoop() {
     handleMovement();
-    render(players, collectible);
+    render();
     requestAnimationFrame(gameLoop);
 }
 
@@ -31,7 +31,11 @@ socket.on('playerMoved', updatedPlayers => {
     players = updatedPlayers;
 })
 
-function render(players, collectible) {
+socket.on('newCollectible', updatedCollectible => {
+    collectible = updatedCollectible;
+})
+
+function render() {
     context.fillStyle = bgColor;
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillRect(0, 0, canvas.width, canvas.height);

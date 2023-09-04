@@ -4,6 +4,7 @@ import { canvasWidth, canvasHeight } from '../public/constants.mjs';
 
 module.exports = function (io, canvasWidth = canvasWidth, canvasHeight = canvasHeight) {
   const players = {}; // Object to store player instances
+  let collectible = new Collectible({});
 
   io.on('connection', socket => {
 
@@ -19,6 +20,11 @@ module.exports = function (io, canvasWidth = canvasWidth, canvasHeight = canvasH
       const player = players[socket.id];
       player.movePlayer(data.dirX, data.speed);
       player.movePlayer(data.dirY, data.speed);
+
+      if (player.collision(collectible)) {
+        collectible.respawn();
+        socket.emit('newCollectible', collectible);
+      }
       socket.emit('playerMoved', players)
     });
 
