@@ -8,7 +8,7 @@ const context = canvas.getContext('2d');
 const bgColor = '#222200';
 const playerColor = '#FFFFFF'
 
-const movementState = { dirX: null, dirY: null };
+const keyDown = { up: false, down: false, left: false, right: false };
 let players = {};
 
 function gameLoop() {
@@ -42,20 +42,28 @@ function renderPlayers(players) {
 
 document.addEventListener('keydown', event => {
     const key = event.key.toLowerCase();
-    if (key === 'w') movementState.dirY = 'up';
-    if (key === 's') movementState.dirY = 'down';
-    if (key === 'a') movementState.dirX = 'left';
-    if (key === 'd') movementState.dirX = 'right';
+    if (key === 'w') keyDown.up = true;
+    if (key === 's') keyDown.down = true;
+    if (key === 'a') keyDown.left = true;
+    if (key === 'd') keyDown.right = true;
 });
 
 document.addEventListener('keyup', event => {
     const key = event.key.toLowerCase();
-    if (key === 'w' || key === 's') movementState.dirY = null;
-    if (key === 'a' || key === 'd') movementState.dirX = null;
+    if (key === 'w') keyDown.up = false;
+    if (key === 's') keyDown.down = false;
+    if (key === 'a') keyDown.left = false;
+    if (key === 'd') keyDown.right = false;
 });
 
 function handleMovement() {
     const speed = 5;
+    const dirX = keyDown.left ? 'left' :
+        keyDown.right ? 'right' :
+            null;
+    const dirY = keyDown.up ? 'up' :
+        keyDown.down ? 'down' :
+            null;
 
-    socket.emit('move', { dirX: movementState.dirX, dirY: movementState.dirY, speed });
+    socket.emit('move', { dirX: dirX, dirY: dirY, speed });
 }
