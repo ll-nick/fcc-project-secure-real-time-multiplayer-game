@@ -55,7 +55,7 @@ document.addEventListener('keyup', event => {
 });
 
 function handleMovement() {
-    const speed = 10;
+    const speed = 5;
 
     socket.emit('move', { dirX: movementState.dirX, dirY: movementState.dirY, speed });
 }
