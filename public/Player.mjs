@@ -1,9 +1,7 @@
-import { canvasWidth, canvasHeight } from './constants.mjs';
+import { canvasWidth, canvasHeight, playerWidth, playerHeight } from './constants.mjs';
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-const playerWidth = 30;
-const playerHeight = 30;
 class Player {
   constructor({
     x = Math.random() * (canvasWidth - playerWidth),
