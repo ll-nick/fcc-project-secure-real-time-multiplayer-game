@@ -6,15 +6,16 @@ const canvas = document.getElementById('game-window');
 const context = canvas.getContext('2d');
 
 const bgColor = '#222200';
-const playerColor = '#FFFFFF'
+const collectibleColor = '#FFFFFF'
 
 const keyDown = { up: false, down: false, left: false, right: false };
 let players = {};
 let playerAvatars = {};
+let collectible = new Collectible({});
 
 function gameLoop() {
     handleMovement();
-    renderPlayers(players);
+    render(players, collectible);
     requestAnimationFrame(gameLoop);
 }
 
@@ -30,7 +31,7 @@ socket.on('playerMoved', updatedPlayers => {
     players = updatedPlayers;
 })
 
-function renderPlayers(players) {
+function render(players, collectible) {
     context.fillStyle = bgColor;
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -38,6 +39,8 @@ function renderPlayers(players) {
     for (const player of Object.values(players)) {
         context.drawImage(playerAvatars[player.id], player.x, player.y, player.width, player.height);
     }
+    context.fillStyle = collectibleColor;
+    context.fillRect(collectible.x, collectible.y, collectible.size, collectible.size);
 }
 
 document.addEventListener('keydown', event => {
