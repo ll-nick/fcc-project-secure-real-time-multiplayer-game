@@ -1,7 +1,8 @@
 import Player from '../public/Player.mjs';
 import Collectible from '../public/Collectible.mjs';
+import { canvasWidth, canvasHeight } from '../public/constants.mjs';
 
-module.exports = function (io, canvasWidth = 640, canvasHeight = 480) {
+module.exports = function (io, canvasWidth = canvasWidth, canvasHeight = canvasHeight) {
   const players = {}; // Object to store player instances
 
   io.on('connection', socket => {

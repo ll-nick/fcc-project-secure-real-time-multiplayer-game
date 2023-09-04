@@ -1,7 +1,7 @@
+import { canvasWidth, canvasHeight } from './constants.mjs';
+
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-const canvasWidth = 640;
-const canvasHeight = 480;
 const playerWidth = 30;
 const playerHeight = 30;
 class Player {
