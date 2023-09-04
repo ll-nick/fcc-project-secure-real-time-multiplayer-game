@@ -1,9 +1,18 @@
+import { canvasWidth, canvasHeight, collectibleSize } from './constants.mjs';
+
 class Collectible {
-  constructor({x, y, value, id}) {
+  constructor({
+    x = Math.random() * (canvasWidth - collectibleSize),
+    y = Math.random() * (canvasHeight - collectibleSize),
+    value = 10,
+    id = Date.now(),
+    size = collectibleSize
+  }) {
     this.x = x;
     this.y = y;
     this.value = value;
     this.id = id;
+    this.size = size;
   }
 
 }
@@ -14,6 +23,6 @@ class Collectible {
 */
 try {
   module.exports = Collectible;
-} catch(e) {}
+} catch (e) { }
 
 export default Collectible;
