@@ -13,6 +13,7 @@ const keyDown = { up: false, down: false, left: false, right: false };
 let players = {};
 let playerAvatars = {};
 let collectible = {};
+let thisPlayer;
 
 function gameLoop() {
     handleMovement();
@@ -30,6 +31,7 @@ socket.on('newPlayer', updatedPlayers => {
             playerAvatars[id].src = updatedPlayers[id].avatarSrc;
         }
     }
+    thisPlayer = new Player(players[socket.id]);
 });
 
 socket.on('playerMoved', updatedPlayers => {
@@ -47,9 +49,15 @@ function render() {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // Title
-    context.font = '24px PressStart2P';
+    context.font = '20px PressStart2P';
     context.fillStyle = 'white';
-    context.fillText('Coin Race', canvasWidth / 3, 30);
+    context.fillText('Coin Race', canvasWidth * 0.3, 30);
+
+    // Rank
+    if (thisPlayer) {
+        context.font = '12px PressStart2P';
+        context.fillText(thisPlayer.calculateRank(Object.values(players)), canvasWidth * 0.7, 30);
+    }
 
     // Players
     for (const player of Object.values(players)) {
