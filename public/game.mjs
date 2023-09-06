@@ -1,15 +1,14 @@
 import Player from './Player.mjs';
-import Collectible from './Collectible.mjs';
 import { gameAreaMargin, gameAreaWidth, gameAreaHeight } from './constants.mjs';
+
+const bgColor = '#222200';
+const mainColor = 'white'
+const titleFontSize = 18;
+const fontSize = 12;
 
 const socket = io();
 const canvas = document.getElementById('game-window');
 const context = canvas.getContext('2d');
-
-const bgColor = '#222200';
-const collectibleColor = '#FFFFFF'
-const titleFontSize = 18;
-
 const keyDown = { up: false, down: false, left: false, right: false };
 let players = {};
 let playerAvatars = {};
@@ -24,7 +23,11 @@ function gameLoop() {
 
 gameLoop();
 
-socket.on('newPlayer', updatedPlayers => {
+socket.on('youJoined', player => {
+    thisPlayer = new Player(player);
+})
+
+socket.on('someoneJoined', updatedPlayers => {
     players = updatedPlayers;
     for (const id in updatedPlayers) {
         if (!playerAvatars[id]) { // Check if not already initialized
@@ -32,7 +35,6 @@ socket.on('newPlayer', updatedPlayers => {
             playerAvatars[id].src = updatedPlayers[id].avatarSrc;
         }
     }
-    thisPlayer = new Player(players[socket.id]);
 });
 
 socket.on('playerMoved', updatedPlayers => {
@@ -64,21 +66,21 @@ function renderHeader() {
 }
 
 function renderFrame() {
-    context.strokeStyle = 'white';
+    context.strokeStyle = mainColor;
     context.lineWidth = 2;
     context.strokeRect(gameAreaMargin.left, gameAreaMargin.top, gameAreaWidth, gameAreaHeight);
 }
 
 function renderInstructions() {
-    context.font = '12px PressStart2P';
-    context.fillStyle = 'white';
+    context.font = fontSize + 'px PressStart2P';
+    context.fillStyle = mainColor;
     const instructionsText = 'Controls: WASD';
     context.fillText(instructionsText, gameAreaMargin.left, (gameAreaMargin.top + titleFontSize) / 2);
 }
 
 function renderTitle() {
     context.font = titleFontSize + 'px PressStart2P';
-    context.fillStyle = 'white';
+    context.fillStyle = mainColor;
 
     // Calculate the width of the text to center it
     const titleText = 'Coin Race';
@@ -89,7 +91,7 @@ function renderTitle() {
 
 function renderRankDisplay() {
     if (thisPlayer) {
-        context.font = '12px PressStart2P';
+        context.font = fontSize + 'px PressStart2P';
         const rankText = thisPlayer.calculateRank(Object.values(players));
         const rankTextWidth = context.measureText(rankText).width;
         const rankX = canvas.width - gameAreaMargin.right - rankTextWidth;
@@ -111,7 +113,7 @@ function renderPlayers() {
 }
 
 function renderCollectible() {
-    context.fillStyle = collectibleColor;
+    context.fillStyle = mainColor;
     const canvasCoordinates = gameAreaToCanvas(collectible.x, collectible.y)
     const collectibleRadius = collectible.size / 2; // Calculate the radius
     const collectibleX = canvasCoordinates.x + collectibleRadius; // Adjust for the center

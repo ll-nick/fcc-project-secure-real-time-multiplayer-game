@@ -13,8 +13,9 @@ module.exports = function (io, canvasWidth = canvasWidth, canvasHeight = canvasH
     players[socket.id] = newPlayer;
 
     // Send player data to the client
-    io.emit('newPlayer', players);
-    io.emit('newCollectible', collectible);
+    socket.emit('youJoined', newPlayer)
+    socket.emit('newCollectible', collectible);
+    io.emit('someoneJoined', players);
 
     // Handle player movement and other interactions
     socket.on('move', data => {
