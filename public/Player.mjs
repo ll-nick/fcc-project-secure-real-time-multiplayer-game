@@ -1,19 +1,19 @@
-import { canvasWidth, canvasHeight, playerWidth, playerHeight, collectibleRadius } from './constants.mjs';
+import { gameAreaHeight, gameAreaWidth, playerHeight, playerWidth, collectibleRadius } from './constants.mjs';
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 class Player {
   constructor({
-    x = Math.random() * (canvasWidth - playerWidth),
-    y = Math.random() * (canvasHeight - playerHeight),
+    x = Math.random() * (gameAreaWidth - playerWidth),
+    y = Math.random() * (gameAreaHeight - playerHeight),
     score = 0,
     id = Date.now(),
     width = playerWidth,
     height = playerHeight,
     avatarSrc = '/public/avatar.png'
   }) {
-    this.maxX = canvasWidth - playerWidth;
-    this.maxY = canvasHeight - playerHeight;
+    this.maxX = gameAreaWidth - playerWidth;
+    this.maxY = gameAreaHeight - playerHeight;
 
     this.x = clamp(x, 0, this.maxX);
     this.y = clamp(y, 0, this.maxY);

@@ -1,6 +1,6 @@
 import Player from './Player.mjs';
 import Collectible from './Collectible.mjs';
-import { canvasWidth } from './constants.mjs';
+import { canvasWidth, gameAreaMargin } from './constants.mjs';
 
 const socket = io();
 const canvas = document.getElementById('game-window');
@@ -61,12 +61,14 @@ function render() {
 
     // Players
     for (const player of Object.values(players)) {
-        context.drawImage(playerAvatars[player.id], player.x, player.y, player.width, player.height);
+        let canvasCoordinates = gameAreaToCanvas(player.x, player.y)
+        context.drawImage(playerAvatars[player.id], canvasCoordinates.x, canvasCoordinates.y, player.width, player.height);
     }
 
     // Collectible
     context.fillStyle = collectibleColor;
-    context.fillRect(collectible.x, collectible.y, collectible.size, collectible.size);
+    let canvasCoordinates = gameAreaToCanvas(collectible.x, collectible.y)
+    context.fillRect(canvasCoordinates.x, canvasCoordinates.y, collectible.size, collectible.size);
 }
 
 document.addEventListener('keydown', event => {
@@ -95,4 +97,11 @@ function handleMovement() {
             null;
 
     socket.emit('move', { dirX: dirX, dirY: dirY, speed });
+}
+
+function gameAreaToCanvas(gameAreaX, gameAreaY) {
+    let convasCoordinates = {}
+    convasCoordinates.x = gameAreaX + gameAreaMargin.left;
+    convasCoordinates.y = gameAreaY + gameAreaMargin.top;
+    return convasCoordinates;
 }
