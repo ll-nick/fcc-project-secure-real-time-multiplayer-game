@@ -12,7 +12,7 @@ const collectibleColor = '#FFFFFF'
 const keyDown = { up: false, down: false, left: false, right: false };
 let players = {};
 let playerAvatars = {};
-let collectible = new Collectible({});
+let collectible = {};
 
 function gameLoop() {
     handleMovement();
@@ -24,8 +24,12 @@ gameLoop();
 
 socket.on('newPlayer', updatedPlayers => {
     players = updatedPlayers;
-    playerAvatars[socket.id] = new Image();
-    playerAvatars[socket.id].src = players[socket.id].avatarSrc;
+    for (const id in updatedPlayers) {
+        if (!playerAvatars[id]) { // Check if not already initialized
+            playerAvatars[id] = new Image();
+            playerAvatars[id].src = updatedPlayers[id].avatarSrc;
+        }
+    }
 });
 
 socket.on('playerMoved', updatedPlayers => {
@@ -46,7 +50,6 @@ function render() {
     context.font = '24px PressStart2P';
     context.fillStyle = 'white';
     context.fillText('Coin Race', canvasWidth / 3, 30);
-
 
     // Players
     for (const player of Object.values(players)) {

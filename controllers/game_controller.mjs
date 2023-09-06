@@ -13,7 +13,8 @@ module.exports = function (io, canvasWidth = canvasWidth, canvasHeight = canvasH
     players[socket.id] = newPlayer;
 
     // Send player data to the client
-    socket.emit('newPlayer', players);
+    io.emit('newPlayer', players);
+    io.emit('newCollectible', collectible);
 
     // Handle player movement and other interactions
     socket.on('move', data => {
@@ -23,9 +24,9 @@ module.exports = function (io, canvasWidth = canvasWidth, canvasHeight = canvasH
 
       if (player.collision(collectible)) {
         collectible.respawn();
-        socket.emit('newCollectible', collectible);
+        io.emit('newCollectible', collectible);
       }
-      socket.emit('playerMoved', players)
+      io.emit('playerMoved', players)
     });
 
     // Handle player disconnection
