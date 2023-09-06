@@ -1,6 +1,6 @@
 import Player from './Player.mjs';
 import Collectible from './Collectible.mjs';
-import { canvasWidth, gameAreaMargin } from './constants.mjs';
+import { gameAreaMargin, gameAreaWidth, gameAreaHeight } from './constants.mjs';
 
 const socket = io();
 const canvas = document.getElementById('game-window');
@@ -8,6 +8,7 @@ const context = canvas.getContext('2d');
 
 const bgColor = '#222200';
 const collectibleColor = '#FFFFFF'
+const titleFontSize = 18;
 
 const keyDown = { up: false, down: false, left: false, right: false };
 let players = {};
@@ -44,8 +45,8 @@ socket.on('newCollectible', updatedCollectible => {
 
 function render() {
     renderBackground();
-    renderTitle();
-    renderRankDisplay();
+    renderHeader();
+    renderFrame();
     renderPlayers();
     renderCollectible();
 }
@@ -56,30 +57,68 @@ function renderBackground() {
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-function renderTitle() {
-    context.font = '20px PressStart2P';
+function renderHeader() {
+    renderInstructions();
+    renderTitle();
+    renderRankDisplay();
+}
+
+function renderFrame() {
+    context.strokeStyle = 'white';
+    context.lineWidth = 2;
+    context.strokeRect(gameAreaMargin.left, gameAreaMargin.top, gameAreaWidth, gameAreaHeight);
+}
+
+function renderInstructions() {
+    context.font = '12px PressStart2P';
     context.fillStyle = 'white';
-    context.fillText('Coin Race', canvasWidth * 0.3, 30);
+    const instructionsText = 'Controls: WASD';
+    context.fillText(instructionsText, gameAreaMargin.left, (gameAreaMargin.top + titleFontSize) / 2);
+}
+
+function renderTitle() {
+    context.font = titleFontSize + 'px PressStart2P';
+    context.fillStyle = 'white';
+
+    // Calculate the width of the text to center it
+    const titleText = 'Coin Race';
+    const titleTextWidth = context.measureText(titleText).width;
+    const titleX = gameAreaMargin.left + (canvas.width - titleTextWidth) / 2;
+    context.fillText(titleText, titleX, (gameAreaMargin.top + titleFontSize) / 2);
 }
 
 function renderRankDisplay() {
     if (thisPlayer) {
         context.font = '12px PressStart2P';
-        context.fillText(thisPlayer.calculateRank(Object.values(players)), canvasWidth * 0.7, 30);
+        const rankText = thisPlayer.calculateRank(Object.values(players));
+        const rankTextWidth = context.measureText(rankText).width;
+        const rankX = canvas.width - gameAreaMargin.right - rankTextWidth;
+        context.fillText(thisPlayer.calculateRank(Object.values(players)), rankX, (gameAreaMargin.top + titleFontSize) / 2);
     }
 }
 
 function renderPlayers() {
     for (const player of Object.values(players)) {
         let canvasCoordinates = gameAreaToCanvas(player.x, player.y)
+        if (player.id === thisPlayer.id) {
+            context.shadowColor = 'rgba(255, 215, 0, 0.5)';
+            context.shadowBlur = player.width;
+        }
         context.drawImage(playerAvatars[player.id], canvasCoordinates.x, canvasCoordinates.y, player.width, player.height);
+        context.shadowColor = 'transparent';
+        context.shadowBlur = 0;
     }
 }
 
 function renderCollectible() {
     context.fillStyle = collectibleColor;
     const canvasCoordinates = gameAreaToCanvas(collectible.x, collectible.y)
-    context.fillRect(canvasCoordinates.x, canvasCoordinates.y, collectible.size, collectible.size);
+    const collectibleRadius = collectible.size / 2; // Calculate the radius
+    const collectibleX = canvasCoordinates.x + collectibleRadius; // Adjust for the center
+    const collectibleY = canvasCoordinates.y + collectibleRadius; // Adjust for the center
+    context.beginPath();
+    context.arc(collectibleX, collectibleY, collectibleRadius, 0, Math.PI * 2);
+    context.fill();
 }
 
 document.addEventListener('keydown', event => {
