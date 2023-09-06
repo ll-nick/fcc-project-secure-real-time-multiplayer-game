@@ -1,5 +1,6 @@
 import Player from './Player.mjs';
 import Collectible from './Collectible.mjs';
+import { canvasWidth } from './constants.mjs';
 
 const socket = io();
 const canvas = document.getElementById('game-window');
@@ -36,13 +37,23 @@ socket.on('newCollectible', updatedCollectible => {
 })
 
 function render() {
+    // Background
     context.fillStyle = bgColor;
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Title
+    context.font = '24px PressStart2P';
+    context.fillStyle = 'white';
+    context.fillText('Coin Race', canvasWidth / 3, 30);
+
+
+    // Players
     for (const player of Object.values(players)) {
         context.drawImage(playerAvatars[player.id], player.x, player.y, player.width, player.height);
     }
+
+    // Collectible
     context.fillStyle = collectibleColor;
     context.fillRect(collectible.x, collectible.y, collectible.size, collectible.size);
 }
