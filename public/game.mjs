@@ -43,31 +43,42 @@ socket.on('newCollectible', updatedCollectible => {
 })
 
 function render() {
-    // Background
+    renderBackground();
+    renderTitle();
+    renderRankDisplay();
+    renderPlayers();
+    renderCollectible();
+}
+
+function renderBackground() {
     context.fillStyle = bgColor;
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillRect(0, 0, canvas.width, canvas.height);
+}
 
-    // Title
+function renderTitle() {
     context.font = '20px PressStart2P';
     context.fillStyle = 'white';
     context.fillText('Coin Race', canvasWidth * 0.3, 30);
+}
 
-    // Rank
+function renderRankDisplay() {
     if (thisPlayer) {
         context.font = '12px PressStart2P';
         context.fillText(thisPlayer.calculateRank(Object.values(players)), canvasWidth * 0.7, 30);
     }
+}
 
-    // Players
+function renderPlayers() {
     for (const player of Object.values(players)) {
         let canvasCoordinates = gameAreaToCanvas(player.x, player.y)
         context.drawImage(playerAvatars[player.id], canvasCoordinates.x, canvasCoordinates.y, player.width, player.height);
     }
+}
 
-    // Collectible
+function renderCollectible() {
     context.fillStyle = collectibleColor;
-    let canvasCoordinates = gameAreaToCanvas(collectible.x, collectible.y)
+    const canvasCoordinates = gameAreaToCanvas(collectible.x, collectible.y)
     context.fillRect(canvasCoordinates.x, canvasCoordinates.y, collectible.size, collectible.size);
 }
 
